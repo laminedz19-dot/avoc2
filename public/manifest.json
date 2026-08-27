@@ -1,0 +1,43 @@
+{
+  "name": "AchriDZ – سوق المستعمل في الجزائر (69 ولاية)",
+  "short_name": "AchriDZ",
+  "description": "منصة جزائرية موثوقة لبيع وشراء المنتجات المستعملة عبر 69 ولاية جزائرية مع نظام إعلانات مدفوعة برسوم نشر ثابتة 200 دج ومكافحة الاحتيال.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F172A",
+  "theme_color": "#0F766E",
+  "dir": "rtl",
+  "lang": "ar-DZ",
+  "categories": ["shopping", "lifestyle", "business"],
+  "icons": [
+    {
+      "src": "/icons/app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "نشر إعلان جديد (+ 200 دج)",
+      "short_name": "نشر إعلان",
+      "description": "أنشئ إعلانك الجديد في 10 مراحل",
+      "url": "/create",
+      "icons": [{ "src": "/icons/app-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "البحث في 69 ولاية",
+      "short_name": "بحث",
+      "description": "ابحث عن منتج مستعمل حسب الولاية والفئة",
+      "url": "/search",
+      "icons": [{ "src": "/icons/app-icon.png", "sizes": "192x192" }]
+    }
+  ]
+}
