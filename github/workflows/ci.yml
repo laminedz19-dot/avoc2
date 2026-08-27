@@ -1,0 +1,84 @@
+name: CI - AchriDZ
+
+# Déclenchement : à chaque push sur main et à chaque pull request
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Évite de faire tourner deux workflows en parallèle sur la même branche
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, Typecheck & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Lint (ESLint)
+        run: npm run lint
+
+      - name: Vérification des types (TypeScript)
+        run: npm run typecheck
+
+      - name: Build de production (Next.js)
+        run: npm run build
+        env:
+          # Variable factice pour permettre au build de s'exécuter en CI.
+          # Remplacez par un vrai secret GitHub (Settings > Secrets > Actions)
+          # si le build a besoin d'accéder réellement à la base de données.
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://postgres:postgres@127.0.0.1:5432/app_db' }}
+
+  # Job optionnel : vérifie que le schéma Drizzle est valide (sans le pousser en base)
+  drizzle-check:
+    name: Vérifier le schéma Drizzle
+    runs-on: ubuntu-latest
+    needs: quality
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Générer/valider le schéma (drizzle-kit)
+        run: npx drizzle-kit generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/app_db
